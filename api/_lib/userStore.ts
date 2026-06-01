@@ -18,9 +18,36 @@ export const FREE_DAILY_LIMIT = 20
 const users = new Map<string, User>()
 let counter = 1
 
+// Seed a demo account (always available)
+const DEMO_EMAIL = 'demo@mailmind.app'
+const DEMO_PASSWORD = 'demo123'
+
+function seedDemoUser() {
+  if (userStore.findByEmail(DEMO_EMAIL)) return
+
+  // Note: bcryptjs is available
+  const bcrypt = require('bcryptjs')
+  const passwordHash = bcrypt.hashSync(DEMO_PASSWORD, 12)
+
+  const demoUser: User = {
+    id: String(counter++),
+    email: DEMO_EMAIL,
+    passwordHash,
+    name: 'Demo User',
+    tier: 'free',
+    usageCount: 0,
+    usageResetDate: new Date().toISOString().split('T')[0],
+    createdAt: new Date().toISOString(),
+  }
+  users.set(demoUser.id, demoUser)
+}
+
+seedDemoUser()
+
 export const userStore = {
   findByEmail: (email: string) => {
-    for (const u of users.values()) if (u.email === email) return u
+    const lowerEmail = email.toLowerCase()
+    for (const u of users.values()) if (u.email.toLowerCase() === lowerEmail) return u
   },
   findById: (id: string) => users.get(id),
   findByGoogleId: (googleId: string) => {
