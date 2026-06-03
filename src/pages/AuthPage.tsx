@@ -21,7 +21,7 @@ export const AuthPage = ({ onLogin, onRegister, onGoogleLogin, isLoading }: Auth
   const handle = (fn: () => Promise<void>) => async () => {
     setError('')
     try { await fn() }
-    catch (e: any) { setError(e.error || 'Something went wrong') }
+    catch (e: any) { setError(e.error || e.message || 'Something went wrong') }
   }
 
   return (
